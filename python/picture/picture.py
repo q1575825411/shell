@@ -68,6 +68,12 @@ def get_user_choice(options, prompt):
 def fetch_image():
     """根据用户选择的参数获取并保存图片。"""
     sort = get_user_choice(sort_options, "Choose sort option:")
+    # 根据用户选择的图片类型设置保存目录
+    if sort == 'r18':
+        save_dir = 'pics/r20'
+    else:
+        save_dir = 'pics/r10'
+
     size = get_user_choice(size_r18_options if sort == 'r18' else size_options, "Choose size option:")
     num = input("Enter number of images (1-100): ")
 
@@ -83,8 +89,10 @@ def fetch_image():
         data = response.json()
         if 'pics' in data:  # 确认返回数据中有'pics'字段
             image_urls = data['pics']
+            # 确保保存目录存在
+            os.makedirs(save_dir, exist_ok=True)
             for i, image_url in enumerate(image_urls, start=1):
-                save_image(image_url, 'pics')
+                save_image(image_url, save_dir)  # 使用动态确定的保存目录
         else:
             print("No images returned by the API.")
     else:

@@ -1,0 +1,14 @@
+gouxinyue@gouxinyue-System-Product-Name:~/hard3/2_Taishi/OTA_SERVER/build_config/D3_Pro$ 
+
+./out/host/linux-x86/bin/ota_from_target_files --wipe_user_data -p out/host/linux-x86 -v --block -i D3_PRO_user_noefuse_1.0.0_250_20240220030654_target_files.zip  D3_PRO_user_noefuse_1.0.0_251_20240220031643_target_files.zip 'update_250_to_251_ota_factoryreset.zip' 2>&1
+
+
+
+
+java -Xmx2048m -Djava.library.path=out/host/linux-x86/lib64 -jar out/host/linux-x86/framework/signapk.jar -w tools/sunmitools/.config/sunmi/build/security/releasekey.x509.pem tools/sunmitools/.config/sunmi/build/security/releasekey.pk8 ../Helsinki_SunmiOS_user_1.0.0_1523_20240117022217_full_ota.zip  ../Helsinki_SunmiOS_user_1.0.0_1523_20240117022217_full_ota_new.zip
+
+
+
+
+
+V30921C420543

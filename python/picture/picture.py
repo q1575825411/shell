@@ -62,14 +62,14 @@ def copy_if_newer(src_dir, dst_dir):
     """
     for src_dirname, dirs, files in os.walk(src_dir):
         dst_dirname = src_dirname.replace(src_dir, dst_dir, 1)
-        
+
         # 确保目标目录存在
         os.makedirs(dst_dirname, exist_ok=True)
-        
+
         for file in files:
             src_file = os.path.join(src_dirname, file)
             dst_file = os.path.join(dst_dirname, file)
-            
+
             # 如果目标文件不存在或源文件更新，则复制文件
             if not os.path.exists(dst_file) or os.path.getmtime(src_file) > os.path.getmtime(dst_file):
                 shutil.copy2(src_file, dst_file)  # copy2保留元数据，包括最后修改时间
@@ -117,7 +117,7 @@ def fetch_image():
             print("No images returned by the API.")
     else:
         print("Failed to fetch images or invalid response format")
-        
+
     src_dir = 'pics'
     dst_dir = '/home/zly/disk/work/write/UPDATE/pics'
     copy_if_newer(src_dir, dst_dir)

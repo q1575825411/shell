@@ -1,0 +1,1 @@
+docker run --rm -Pti --network=host --hostname=Sunmi --user=$(id -u):$(id -g) -v /home/you.tian/.ssh:/home/compiler/.ssh  -v $(realpath .):/WorkSpace -w /WorkSpace hub.sunmi.com/os/osjenkins:18.04 bash

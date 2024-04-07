@@ -1,0 +1,1 @@
+repo forall -c "git reset --hard; git clean -fdx" && repo sync -c -d -q --no-tags

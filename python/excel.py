@@ -1,30 +1,4 @@
-import pandas as pd
-import re
-
-# 定义你的文件路径
-file_path = '/home/zly/Desktop/V2s/combined_results3.txt'
-
-# 初始化列表以保存提取的数据
-filenames = []
-ids = []
-descriptions = []
-
-# 正则表达式模式，用于匹配所需元素
-file_pattern = r'^File: (.+?)\.txt$'
-entry_pattern = r'^([a-z0-9]+) - (.+?), \d+ years, \d+ months ago : (.+)$'
-
-# 打开并读取文件
-with open(file_path, 'r') as file:
-    lines = file.readlines()
-    current_file = ""
-    for line in lines:
-        # 检查文件名行
-        file_match = re.match(file_pattern, line.strip(), re.IGNORECASE)
-        if file_match:
-            current_file = file_match.group(1)  # 提取文件名
-        else:
-            # 检查条目行（id - 作者, 日期 : 描述）
-            entry_match = re.match(entry_pattern, line.strip(), re.IGNORECASE)import sys
+import sys
 import pandas as pd
 import re
 from datetime import datetime

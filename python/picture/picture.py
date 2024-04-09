@@ -30,7 +30,10 @@ def save_image(image_url, save_path):
             print(f"Failed to save image: {e}")
     else:
         print(f"Image already exists: {full_save_path}")
-    copy_if_newer(save_path,COPY_DIR_BASE)
+    if 'r18' not in save_path:
+        copy_if_newer(save_path, COPY_DIR_BASE)
+    else:
+        print("Skipping copy for R18 content.")
 
 def copy_if_newer(src_dir, dst_dir):
     """

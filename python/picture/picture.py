@@ -1,49 +1,16 @@
+# main.py
+
 import requests
 from urllib.parse import urlparse, unquote
 import os
 import shutil
-
-# 配置参数
-API_URL = "https://moe.jitsu.top/img/"
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
-SAVE_DIR_BASE = "pics" 
-COPY_DIR_BASE = "/home/zly/disk/work/write/UPDATE/pics"
-
-# 参数映射表
-sort_options = {
-    '1': 'all',
-    '2': 'mp',
-    '3': 'pc',
-    '4': 'silver',
-    '5': 'furry',
-    '6': 'r18',
-    '7': 'pixiv',
-    '8': 'jitsu',
-}
-size_options = {
-    # '1': 'large',
-    '2': 'mw2048',
-    '3': 'mw1024',
-    '4': 'mw690',
-    '5': 'small',
-    '6': 'bmiddle',
-    '7': 'thumb180',
-    '8': 'square',
-}
-size_r18_options = {
-    '1': 'original',
-    '2': 'regular',
-    '3': 'small',
-}
+from config import API_URL, USER_AGENT, SAVE_DIR_BASE, COPY_DIR_BASE, sort_options, size_options, size_r18_options
 
 session = requests.Session()
 session.headers.update({'User-Agent': USER_AGENT})
 
 def save_image(image_url, save_path):
     """下载并保存图片到指定路径，文件名从URL中提取。"""
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-    }
     # 从URL解析出文件名
     parsed_url = urlparse(image_url)
     # 解码URL编码的文件名（如果有的话），并从路径中提取文件名

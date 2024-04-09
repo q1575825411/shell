@@ -49,7 +49,7 @@ def copy_if_newer(src_dir, dst_dir):
 
             # 如果目标文件不存在或源文件更新，则复制文件
             if not os.path.exists(dst_file) or os.path.getmtime(src_file) > os.path.getmtime(dst_file):
-                shutil.copy2(src_file, dst_file)  # copy2保留元数据，包括最后修改时间
+                shutil.copy2(src_file, dst_file)
 
 def get_user_choice(options, prompt):
     """让用户选择一个选项，并返回对应的值。"""

@@ -108,23 +108,3 @@ if __name__ == "__main__":
             print(f"数据已经被提取并保存到了: {output_xlsx_path}")
         except Exception as e:
             print(f"处理文件时出错: {e}")
-
-            if entry_match:
-                ids.append(entry_match.group(1))  # 提取ID
-                descriptions.append(entry_match.group(3))  # 提取描述
-                filenames.append(current_file)  # 添加当前文件名
-
-# 创建DataFrame
-df = pd.DataFrame({
-    '文件名': filenames,
-    'ID': ids,
-    '描述': descriptions
-})
-
-# 定义输出CSV文件的路径
-output_csv_path = '/home/zly/Desktop/V2s/extracted_data.csv'
-
-# 将DataFrame保存到CSV文件
-df.to_csv(output_csv_path, index=False, encoding='utf_8_sig')
-
-output_csv_path

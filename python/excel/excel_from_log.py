@@ -45,11 +45,11 @@ def process_log_lines(file):
             current_entry['Author'] = author_match.group(1)
         elif date_match := date_regex.match(line):
             current_entry['Date'] = try_parse_date(date_match.group(1))
-            collecting_message = True  # Start collecting message text after the date
+            collecting_message = True  
         elif change_id_match := change_id_regex.search(line):
             current_entry['Change-Id'] = change_id_match.group(1)
         elif collecting_message:
-            if line.strip():  # Only add non-empty lines to message
+            if line.strip():  
                 message.append(line)
 
     # Yield the last entry if it exists

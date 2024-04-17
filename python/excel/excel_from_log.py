@@ -61,11 +61,13 @@ def save_to_csv(entries, output_dir, output_filename):
     os.makedirs(output_dir, exist_ok=True)
     filepath = os.path.join(output_dir, output_filename)
     with open(filepath, 'w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['Repository', 'Author', 'Date', 'Change-Id', 'Message']
+        # Adjust the order of fields
+        fieldnames = ['Repository', 'Message', 'Author', 'Date', 'Change-Id']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for entry in entries:
             writer.writerow(entry)
+
 
 def main():
     if len(sys.argv) < 2:

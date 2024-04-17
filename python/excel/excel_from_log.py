@@ -22,7 +22,7 @@ def process_log_lines(file):
     author_regex = re.compile(r'^Author: (.+?) <.+>')
     date_regex = re.compile(r'^Date:\s+(.+)$')
     change_id_regex = re.compile(r'Change-Id: (\w+)')
-    filter_keywords = ["Merge tag", "SP3136", "initialize platform base chipcode", "SP3915", "SP3115"]
+    filter_keywords = ["Merge tag", "SP3136", "initialize platform base chipcode", "SP3915", "SP3115","Initial empty repository"]
     
     current_entry = {}
     current_repo = ""
@@ -60,13 +60,15 @@ def process_log_lines(file):
 def save_to_csv(entries, output_dir, output_filename):
     os.makedirs(output_dir, exist_ok=True)
     filepath = os.path.join(output_dir, output_filename)
+    # 将entries转换为列表并排序
+    sorted_entries = sorted(entries, key=lambda x: datetime.strptime(x['Date'], '%Y-%m-%d %H:%M:%S'))
     with open(filepath, 'w', newline='', encoding='utf-8') as csvfile:
-        # Adjust the order of fields
         fieldnames = ['Repository', 'Message', 'Author', 'Date', 'Change-Id']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
-        for entry in entries:
+        for entry in sorted_entries:
             writer.writerow(entry)
+
 
 
 def main():

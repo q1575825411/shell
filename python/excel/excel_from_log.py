@@ -22,22 +22,24 @@ def process_log_lines(file):
     author_regex = re.compile(r'^Author: (.+?) <.+>')
     date_regex = re.compile(r'^Date:\s+(.+)$')
     change_id_regex = re.compile(r'Change-Id: (\w+)')
+    filter_keywords = ["Merge tag", "SP3136", "initialize platform base chipcode", "SP3915", "SP3115"]
     
     current_entry = {}
     current_repo = ""
     message = []
     collecting_message = False
 
+    def check_filter(text):
+        return any(keyword in text for keyword in filter_keywords)
+
     for line in file:
-        line = line.rstrip()  # Remove trailing whitespace
+        line = line.rstrip()
         if repo_match := repo_regex.match(line):
-            current_repo = repo_match.group(1)  # Update the current repository
+            current_repo = repo_match.group(1)
         elif commit_regex.match(line):
-            if current_entry:
-                # Yield the current entry
+            if current_entry and not check_filter('\n'.join(message)):
                 current_entry['Message'] = '\n'.join(message).strip()
                 yield current_entry
-            # Reset for the next entry
             current_entry = {'Repository': current_repo}
             message = []
             collecting_message = False
@@ -45,15 +47,13 @@ def process_log_lines(file):
             current_entry['Author'] = author_match.group(1)
         elif date_match := date_regex.match(line):
             current_entry['Date'] = try_parse_date(date_match.group(1))
-            collecting_message = True  
+            collecting_message = True
         elif change_id_match := change_id_regex.search(line):
             current_entry['Change-Id'] = change_id_match.group(1)
-        elif collecting_message:
-            if line.strip():  
-                message.append(line)
+        elif collecting_message and line.strip():
+            message.append(line)
 
-    # Yield the last entry if it exists
-    if current_entry and message:
+    if current_entry and not check_filter('\n'.join(message)):
         current_entry['Message'] = '\n'.join(message).strip()
         yield current_entry
 
@@ -73,9 +73,8 @@ def main():
         sys.exit(1)
     
     log_file_path = sys.argv[1]
-    base_filename = os.path.splitext(os.path.basename(log_file_path))[0]
-    output_dir = os.path.join(os.getcwd(), base_filename)
-    output_filename = f"{base_filename}_commit.csv"
+    output_dir = os.path.dirname(log_file_path)
+    output_filename = f"{os.path.splitext(os.path.basename(log_file_path))[0]}_commit.csv"
 
     with open(log_file_path, 'r', encoding='utf-8') as file:
         entries = process_log_lines(file)

@@ -3,7 +3,9 @@ import os
 import csv
 import re
 from datetime import datetime
+from functools import lru_cache
 
+@lru_cache(maxsize=1024)  # Cache the most recent 1024 unique date strings
 def try_parse_date(date_str):
     date_formats = [
         '%a %b %d %H:%M:%S %Y %z',  # e.g., "Mon Feb 4 21:52:53 2019 +0100"
@@ -57,27 +59,31 @@ def process_log_lines(file):
         current_entry['Message'] = '\n'.join(message).strip()
         yield current_entry
 
-def save_to_csv(entries, output_dir, output_filename, max_rows=8000):
+def save_to_csv(entries, output_dir, output_filename, max_rows=12000):
     os.makedirs(output_dir, exist_ok=True)
-    sorted_entries = sorted(entries, key=lambda x: datetime.strptime(x['Date'], '%Y-%m-%d %H:%M:%S'))
-    total_entries = len(sorted_entries)
-    num_files = (total_entries // max_rows) + (1 if total_entries % max_rows != 0 else 0)
+    current_file_index = 0
+    current_file_count = 0
+    current_file = None
+    writer = None
 
-    for i in range(num_files):
-        start_index = i * max_rows
-        end_index = min((i + 1) * max_rows, total_entries)
-        part_entries = sorted_entries[start_index:end_index]
-        part_filename = f"{os.path.splitext(output_filename)[0]}_part{i+1}{os.path.splitext(output_filename)[1]}"
-        filepath = os.path.join(output_dir, part_filename)
-        
-        with open(filepath, 'w', newline='', encoding='utf-8') as csvfile:
-            fieldnames = ['Repository', 'Message', 'Author', 'Date', 'Change-Id']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    for entry in entries:
+        if current_file_count >= max_rows or current_file is None:
+            if current_file is not None:
+                current_file.close()
+            part_filename = f"{os.path.splitext(output_filename)[0]}_part{current_file_index + 1}{os.path.splitext(output_filename)[1]}"
+            filepath = os.path.join(output_dir, part_filename)
+            current_file = open(filepath, 'w', newline='', encoding='utf-8')
+            writer = csv.DictWriter(current_file, fieldnames=['Repository', 'Message', 'Author', 'Date', 'Change-Id'])
             writer.writeheader()
-            for entry in part_entries:
-                writer.writerow(entry)
+            current_file_index += 1
+            current_file_count = 0
+            print(f"Part {current_file_index} will be saved to {filepath}")
 
-        print(f"Part {i+1} saved to {filepath}")
+        writer.writerow(entry)
+        current_file_count += 1
+
+    if current_file is not None:
+        current_file.close()
 
 def main():
     if len(sys.argv) < 2:

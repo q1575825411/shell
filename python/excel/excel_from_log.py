@@ -22,7 +22,7 @@ def process_log_lines(file):
     author_regex = re.compile(r'^Author: (.+?) <.+>')
     date_regex = re.compile(r'^Date:\s+(.+)$')
     change_id_regex = re.compile(r'Change-Id: (\w+)')
-    filter_keywords = ["Merge tag", "SP3136", "initialize platform base chipcode", "SP3915", "SP3115"]
+    filter_keywords = ["Merge tag", "SP3136", "initialize platform base chipcode", "SP3915", "SP3115","SP3129"]
     
     current_entry = {}
     current_repo = ""

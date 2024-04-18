@@ -57,19 +57,27 @@ def process_log_lines(file):
         current_entry['Message'] = '\n'.join(message).strip()
         yield current_entry
 
-def save_to_csv(entries, output_dir, output_filename):
+def save_to_csv(entries, output_dir, output_filename, max_rows=8000):
     os.makedirs(output_dir, exist_ok=True)
-    filepath = os.path.join(output_dir, output_filename)
-    # 将entries转换为列表并排序
     sorted_entries = sorted(entries, key=lambda x: datetime.strptime(x['Date'], '%Y-%m-%d %H:%M:%S'))
-    with open(filepath, 'w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['Repository', 'Message', 'Author', 'Date', 'Change-Id']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for entry in sorted_entries:
-            writer.writerow(entry)
+    total_entries = len(sorted_entries)
+    num_files = (total_entries // max_rows) + (1 if total_entries % max_rows != 0 else 0)
 
+    for i in range(num_files):
+        start_index = i * max_rows
+        end_index = min((i + 1) * max_rows, total_entries)
+        part_entries = sorted_entries[start_index:end_index]
+        part_filename = f"{os.path.splitext(output_filename)[0]}_part{i+1}{os.path.splitext(output_filename)[1]}"
+        filepath = os.path.join(output_dir, part_filename)
+        
+        with open(filepath, 'w', newline='', encoding='utf-8') as csvfile:
+            fieldnames = ['Repository', 'Message', 'Author', 'Date', 'Change-Id']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for entry in part_entries:
+                writer.writerow(entry)
 
+        print(f"Part {i+1} saved to {filepath}")
 
 def main():
     if len(sys.argv) < 2:
@@ -83,8 +91,6 @@ def main():
     with open(log_file_path, 'r', encoding='utf-8', errors='replace') as file:
         entries = process_log_lines(file)
         save_to_csv(entries, output_dir, output_filename)
-
-    print(f"Data saved to {os.path.join(output_dir, output_filename)}")
 
 if __name__ == "__main__":
     main()

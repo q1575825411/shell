@@ -78,7 +78,7 @@ def main():
     output_dir = os.path.dirname(log_file_path)
     output_filename = f"{os.path.splitext(os.path.basename(log_file_path))[0]}_commit.csv"
 
-    with open(log_file_path, 'r', encoding='utf-8') as file:
+    with open(log_file_path, 'r', encoding='utf-8', errors='replace') as file:
         entries = process_log_lines(file)
         save_to_csv(entries, output_dir, output_filename)
 

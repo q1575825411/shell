@@ -30,7 +30,7 @@ def process_log_lines(file):
     current_repo = ""
     message = []
     collecting_message = False
-    cutoff_date = datetime(2010, 1, 1)
+    cutoff_date = datetime(2015, 1, 1)
 
     def check_filter(text):
         return any(keyword in text for keyword in filter_keywords)
